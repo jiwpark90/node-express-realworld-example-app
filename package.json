@@ -5,11 +5,12 @@
   "main": "app.js",
   "scripts": {
     "start": "node ./app.js",
+    "dev": "nodemon ./app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/gothinkster/productionready-node-api.git"
+    "url": "git+https://github.com/jiwpark90/node-express-realworld-example-app.git"
   },
   "license": "ISC",
   "dependencies": {
@@ -25,7 +26,7 @@
     "method-override": "2.3.5",
     "methods": "1.1.2",
     "mongoose": "4.4.10",
-    "mongoose-unique-validator": "1.0.2",
+    "mongoose-unique-validator": "^1.0.2",
     "morgan": "1.7.0",
     "passport": "0.3.2",
     "passport-local": "1.0.0",
