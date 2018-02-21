@@ -81,6 +81,3 @@ UserSchema.methods.toAuthJSON = function() {
 
 // 2. register model
 mongoose.model('User', UserSchema);
-
-
-
