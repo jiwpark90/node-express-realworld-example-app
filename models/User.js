@@ -1,4 +1,3 @@
-// TODO figure out what node require is
 var mongoose = require('mongoose');
 var uniqueValidator = require('mongoose-unique-validator');
 var crypto = require('crypto');
@@ -69,6 +68,7 @@ UserSchema.methods.generateJWT = function() {
 // passed to the frontend during auth.
 // should only be returned to that specific user since it
 // contains things like the JWT
+// (gets used after creating the user)
 UserSchema.methods.toAuthJSON = function() {
     return {
         username: this.username,
