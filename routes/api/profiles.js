@@ -1,6 +1,6 @@
+var router = require('express').Router();
 var mongoose = require('mongoose');
 var User = mongoose.model('User');
-var router = require('express').Router();
 var auth = require('../auth');
 
 // middleware to handle the username param in the GET request
