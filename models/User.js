@@ -79,5 +79,14 @@ UserSchema.methods.toAuthJSON = function() {
     };
 }
 
+UserSchema.methods.toProfileJSON = function(user) {
+    return {
+        username: this.username,
+        bio: this.bio || "",
+        image: this.image || 'https://static.productionready.io/images/smiley-cyrus.jpg',
+        following: false
+    };
+}
+
 // 2. register model
 mongoose.model('User', UserSchema);

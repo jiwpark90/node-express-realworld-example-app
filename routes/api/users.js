@@ -35,8 +35,8 @@ router.put('/user', auth.required, function(req, res, next) {
         setPropertyIfDefined("email", req.body.user, user);
         setPropertyIfDefined("bio", req.body.user, user);
         setPropertyIfDefined("image", req.body.user, user);
-        if (typeof req.body.user.passport !== 'undefined') {
-            user.setPassword(req.body.user.passport);
+        if (typeof req.body.user.password !== 'undefined') {
+            user.setPassword(req.body.user.password);
         }
 
         return user.save().then(function() {
@@ -59,6 +59,8 @@ router.post('/users', function(req, res, next) {
     user.username = req.body.user.username;
     user.email = req.body.user.email;
     user.setPassword(req.body.user.password);
+    user.bio = req.body.user.bio;
+    user.image = req.body.user.image;
 
     // if save is successful, then return the user representation
     // that is reserved for specific users (contains JWT token)
@@ -86,9 +88,6 @@ router.post('/users/login', function(req, res, next) {
 
         // after you verify the password, pass back the token
         if (user) {
-            // TODO WHY is it calling generateJWT() if toAuthJSON() already
-            // calls it inside?
-            user.token = user.generateJWT();
             return res.json({user: user.toAuthJSON()});
         } else {
             // this should be the login error
