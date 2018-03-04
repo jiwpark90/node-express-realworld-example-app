@@ -3,7 +3,7 @@
 var router = require('express').Router();
 
 // register the users route
-// uses '/' because the /user(s) is defined
+// uses '/' because the details of '/user(s)' is defined
 // in users.js
 router.use('/', require('./users'));
 router.use('/profiles', require('./profiles'));

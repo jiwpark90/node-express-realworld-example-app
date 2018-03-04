@@ -1,3 +1,12 @@
+/*
+    1. retrieves JWT from the header
+    2. put JWT payload into a variable called 'payload'
+Q:
+    1. is 'credentialsRequired' a special field that 
+    express-jwt understands? What does it do?
+    2. how is payload.id populated?
+*/
+
 var jwt = require('express-jwt');
 var secret = require('../config').secret;
 
@@ -11,7 +20,7 @@ function getTokenFromHeader(req) {
 }
 
 // route 'middleware' to handle decoding JWT's
-// TODO JWT payload will be attached to 'payload'
+// JWT payload will be attached to 'payload'
 var auth = {
     required: jwt({
         secret: secret,

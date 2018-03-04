@@ -49,7 +49,7 @@ ArticleSchema.methods.toJSON = function(user) {
         tagList: this.tagList,
         favoritesCount: this.favoritesCount,
         // mongoose understands that author is of schema 'User'
-        // because it defined it as ref
+        // because it defined it as 'ref' in the schema
         author: this.author.toProfileJSON(user),
 
         createdAt: this.createdAt,

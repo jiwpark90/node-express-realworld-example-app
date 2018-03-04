@@ -79,6 +79,7 @@ UserSchema.methods.toAuthJSON = function() {
     };
 }
 
+// gets the JSON representation of the user's public view
 UserSchema.methods.toProfileJSON = function(user) {
     return {
         username: this.username,
