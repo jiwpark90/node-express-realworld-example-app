@@ -80,7 +80,7 @@ UserSchema.methods.toAuthJSON = function() {
 }
 
 // gets the JSON representation of the user's public view
-UserSchema.methods.toProfileJSON = function(user) {
+UserSchema.methods.toProfileJSON = function() {
     return {
         username: this.username,
         bio: this.bio || "",

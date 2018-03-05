@@ -1,6 +1,7 @@
 /*
     1. Intercepting URL params
     2. Utilizing promise all
+    3. populate() expands on the foreign key
 Q:
     1. What is 'populate'? execPopulate()?
 */
@@ -15,9 +16,7 @@ var auth = require('../auth');
 // middleware to handle the article URL param
 router.param('article', function(req, res, next, slug) {
     Article.findOne({ slug: slug })
-        // TODO what is this??
-        // guessing that it automatically 'expands'
-        // the author field with the referenced User
+        // expands the author field with the referenced User
         .populate('author')
         .then(function(article) {
             if (!article) {
@@ -46,7 +45,7 @@ router.post('/', auth.required, function(req, res, next) {
         // TODO what if the save fails?
         return article.save().then(function() {
             console.log(article.author);
-            return res.json({article: article.toJSONFor(user)});
+            return res.json({article: article.toJSON(user)});
         });
     }).catch(next);
 });
@@ -71,7 +70,7 @@ router.put('/:article', auth.required, function(req, res, next) {
             }
 
             req.article.save().then(function(article) {
-                return res.json({ article: article.toJSONFor(user) });
+                return res.json({ article: article.toJSON(user) });
             }).catch(next);
         } else {
             // unauthorized
@@ -94,11 +93,11 @@ router.get('/:article', auth.optional, function(req, res, next) {
         // to its properties. won't that crash?
         var user = results[0];
 
-        return res.json({ article : req.article.toJSONFor(user)});
+        return res.json({ article : req.article.toJSON(user)});
     }).catch(next);
 });
 
-router.delete('/:aticle', auth.required, function(req, res, next) {
+router.delete('/:article', auth.required, function(req, res, next) {
     User.findById(req.payload.id).then(function() {
         if (req.article.author._id.toString() === req.payload.id.toString()) {
             return req.article.remove().then(function() {

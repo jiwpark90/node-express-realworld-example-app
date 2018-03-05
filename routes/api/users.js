@@ -7,7 +7,6 @@ var auth = require('../auth');
 // GET user
 router.get('/user', auth.required, function(req, res, next) {
     console.log("in get user: ", req);
-    // TODO 'payload' all the sudden? is that the format for 'get' requests?
     User.findById(req.payload.id).then(function(user) {
         // if promise was resolved, but user is falsey, means
         // JWT payload was invalid (express automatically checks it against

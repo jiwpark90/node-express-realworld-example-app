@@ -1,5 +1,5 @@
 var mongoose = require('mongoose');
-var uniqueValidator = require('mongoose-unique');
+var uniqueValidator = require('mongoose-unique-validator');
 var slug = require('slug');
 
 var ArticleSchema = new mongoose.Schema({
@@ -41,6 +41,7 @@ ArticleSchema.pre('validate', function(next) {
 
 // note that it receives user
 ArticleSchema.methods.toJSON = function(user) {
+    console.log("IN TO JSON with USER: ", user);
     return {
         slug: this.slug,
         title: this.title,
