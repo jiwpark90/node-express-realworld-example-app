@@ -32,7 +32,7 @@ router.param('article', function(req, res, next, slug) {
 router.post('/', auth.required, function(req, res, next) {
     User.findById(req.payload.id).then(function(user) {
         if (!user) {
-            // unauthorized - means authentication itself
+            // unauthenticated - means authentication itself
             // is problematic vs. the authenticated user
             // not being authroized for something
             return res.sendStatus(401);
@@ -44,7 +44,6 @@ router.post('/', auth.required, function(req, res, next) {
 
         // TODO what if the save fails?
         return article.save().then(function() {
-            console.log(article.author);
             return res.json({article: article.toJSON(user)});
         });
     }).catch(next);
@@ -85,7 +84,7 @@ router.get('/:article', auth.optional, function(req, res, next) {
     Promise.all([
         // payload will be populated if signed in
         req.payload ? User.findById(req.payload.id) : null,
-        // TODO?? is this connected to the middleware?
+        // execPopulate() returns a promise. you can also pass a callback fxn
         req.article.populate('author').execPopulate()
     ]).then(function(results) {
         // what if the find errors out?
@@ -94,6 +93,43 @@ router.get('/:article', auth.optional, function(req, res, next) {
         var user = results[0];
 
         return res.json({ article : req.article.toJSON(user)});
+    }).catch(next);
+});
+
+// favorite an article
+router.post('/:article/favorite', auth.required, function(req, res, next) {
+    var articleId = req.article._id;
+
+    User.findById(req.payload.id).then(function(currentUser) {
+        if (!currentUser) {
+            // problem with authentication
+            res.sendStatus(401);
+        }
+
+        return currentUser.favorite(articleId).then(function(loluser) {
+            // updateFavoriteCount() returns save(), which is a promise
+            return req.article.updateFavoriteCount().then(function(article) {
+                return res.json({article: article.toJSON(currentUser)});
+            });
+        });
+    }).catch(next);
+});
+
+// unfavorite an article
+router.delete('/:article/unfavorite', auth.required, function(req, res, next) {
+    var articleId = req.article._id;
+
+    User.findById(req.payload.id).then(function(currentUser) {
+        if (!currentUser) {
+            // authentication problem
+            res.sendStatus(401);
+        }
+
+        return currentUser.unfavorite(articleId).then(function() {
+            return req.article.updateFavoriteCount().then(function(article) {
+                return res.json({article: article.toJSON(currentUser)});
+            });
+        });
     }).catch(next);
 });
 

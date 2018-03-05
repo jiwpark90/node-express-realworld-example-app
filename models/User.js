@@ -31,13 +31,36 @@ var UserSchema = new mongoose.Schema({
     bio: String,
     image: String,
     hash: String,
-    salt: String
+    salt: String,
+    favorites: [{
+        type: mongoose.Schema.Types.ObjectId, ref: 'Article'
+    }]
 }, 
 // creates 'createdAt' & 'updatedAt' fields
 {timestamps: true});
 
 // 1a. define additional features for the schema
 UserSchema.plugin(uniqueValidator, {message: "is already taken."});
+
+UserSchema.methods.favorite = function(articleId) {
+    if (this.favorites.indexOf(articleId) === -1) {
+        this.favorites = this.favorites.concat([articleId]);
+    }
+
+    return this.save();
+}
+
+UserSchema.methods.unfavorite = function(articleId) {
+    this.favorites.remove(articleId);
+    return this.save();
+}
+
+UserSchema.methods.isFavorite = function(articleId) {
+    var result = this.favorites.some(function(favId) {
+        return favId.toString() === articleId.toString();
+    });
+    return result;
+}
 
 UserSchema.methods.setPassword = function(password) {
     this.salt = crypto.randomBytes(16).toString('hex');
@@ -80,7 +103,7 @@ UserSchema.methods.toAuthJSON = function() {
 }
 
 // gets the JSON representation of the user's public view
-UserSchema.methods.toProfileJSON = function() {
+UserSchema.methods.toProfileJSON = function(user) {
     return {
         username: this.username,
         bio: this.bio || "",
