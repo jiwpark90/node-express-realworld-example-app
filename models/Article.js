@@ -21,7 +21,11 @@ var ArticleSchema = new mongoose.Schema({
         // basically FK 'constraint'
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
-    }
+    },
+    comments: [{ 
+        type: mongoose.Schema.Types.ObjectId, 
+        ref: 'Comment'
+    }]
 }, { timestamps : true });
 
 ArticleSchema.plugin(uniqueValidator, { message: 'is already taken' });
@@ -64,6 +68,8 @@ ArticleSchema.methods.toJSONFor = function(currentUser) {
 
         createdAt: this.createdAt,
         updatedAt: this.updatedAt
+        // TODO comments will come here, right? probably something like:
+        // comments: ....... foreach? wtf
     };
 }
 

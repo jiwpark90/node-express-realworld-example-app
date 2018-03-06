@@ -2,14 +2,26 @@
     1. Intercepting URL params
     2. Utilizing promise all
     3. populate() expands on the foreign key
-Q:
-    1. What is 'populate'? execPopulate()?
+    4. Interesting way to leverage Promise.resolve() to get optional user
+       in get all comments
+    5. You can get fancy with populate() with options. Look at get comments
+
+    Q: What is 'populate'? execPopulate()?
+    A: what is for sure is that execPopulate() returns a promise that can
+       also be passed a callback fxn. What isn't clear is what the difference
+       between doing that and populate() is, since populate() also seems to
+       return a promise (in the middleware, it does a .then() on it)
+       OBSERVATION: you can .then() a .populate() only if the .populate()'ing
+       on some query. If you have an object, you need to use execPopulate()
+       to get a promise
+    
 */
 
 var router = require('express').Router();
 var mongoose = require('mongoose');
 var Article = mongoose.model('Article');
 var User = mongoose.model('User');
+var Comment = mongoose.model('Comment');
 var passport = require('passport'); // TODO why is this needed?
 var auth = require('../auth');
 
@@ -26,6 +38,19 @@ router.param('article', function(req, res, next, slug) {
             req.article = article;
             return next();
         }).catch(next);
+});
+
+// middleware to resolve the comment
+router.param('comment', function(req, res, next, commentId) {
+    Comment.findById(commentId).then(function(comment) {
+        if (!comment) {
+            res.sendStatus(404);
+        }
+
+        req.comment = comment;
+
+        return next();
+    }).catch(next);
 });
 
 // SAVE article
@@ -133,6 +158,7 @@ router.delete('/:article/unfavorite', auth.required, function(req, res, next) {
     }).catch(next);
 });
 
+// DELETE an article
 router.delete('/:article', auth.required, function(req, res, next) {
     User.findById(req.payload.id).then(function() {
         if (req.article.author._id.toString() === req.payload.id.toString()) {
@@ -145,6 +171,70 @@ router.delete('/:article', auth.required, function(req, res, next) {
             return res.sendStatus(403);
         }
     });
+});
+
+// CREATE a comment
+router.post('/:article/comments', auth.required, function(req, res, next) {
+    User.findById(req.payload.id).then(function(currentUser) {
+        if (!currentUser) {
+            // unauthenticated
+            res.sendStatus(401);
+        }
+        
+        var comment = new Comment(req.body.comment);
+        // setting the reference's _id doesn't work.
+        // also, even if you mutate the object beforehand,
+        // it will ignore
+        comment.article = req.article;
+        comment.author = currentUser;
+        return comment.save().then(function() {
+            req.article.comments = req.article.comments.concat([comment]);
+            return req.article.save().then(function(article) {
+                res.json({comment: comment.toJSONFor(currentUser)});
+            });
+        });
+    }).catch(next);
+});
+
+// GET comments
+router.get('/:article/comments', auth.optional, function(req, res, next) {
+    Promise.resolve(req.payload ? User.findById(req.payload.id) : null).then(function(currentUser) {
+        req.article.populate({
+            path: 'comments',
+            populate: {
+                path: 'author'
+            },
+            options: {
+                sort: {
+                    createdAt: 'desc'
+                }
+            }
+        }).execPopulate().then(function(article) {
+            return res.json({
+                comments: article.comments.map(function(comment) {
+                    return comment.toJSONFor(currentUser);
+                })
+            });
+        });
+    });
+});
+
+// DELETE comment
+router.delete('/:article/comments/:comment', auth.required, function(req, res, next) {
+    if (req.payload.id.toString() === req.comment.author.toString()) {
+        req.article.comments.remove(req.comment._id);
+        req.article.save()
+            .then(function() {
+                return Comment.findById(req.comment._id).remove().exec();
+            })
+            .then(function() {
+                // request successful, and returns no content
+                res.sendStatus(204);
+            });
+    } else {
+        // forbidden
+        res.sendStatus(403);
+    }
 });
 
 module.exports = router;

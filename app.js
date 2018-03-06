@@ -40,7 +40,9 @@ if(isProduction){
 
 require('./models/User');
 require('./models/Article');
+require('./models/Comment');
 require('./config/passport');
+// TODO special syntax for registering routes?
 app.use(require('./routes'));
 
 /// catch 404 and forward to error handler
