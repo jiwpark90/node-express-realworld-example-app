@@ -49,7 +49,7 @@ ArticleSchema.pre('validate', function(next) {
 });
 
 // note that it receives user
-ArticleSchema.methods.toJSON = function(currentUser) {
+ArticleSchema.methods.toJSONFor = function(currentUser) {
     return {
         slug: this.slug,
         title: this.title,
@@ -60,7 +60,7 @@ ArticleSchema.methods.toJSON = function(currentUser) {
         favoritesCount: this.favoritesCount,
         // mongoose understands that author is of schema 'User'
         // because it defined it as 'ref' in the schema
-        author: this.author.toProfileJSON(currentUser),
+        author: this.author.toProfileJSONFor(currentUser),
 
         createdAt: this.createdAt,
         updatedAt: this.updatedAt

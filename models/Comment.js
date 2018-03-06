@@ -17,7 +17,7 @@ CommentSchema.methods.toJSONFor = function(user) {
         id: this._id,
         body: this.body,
         createdAt: this.createdAt,
-        author: this.author.toProfileJSON(user)
+        author: this.author.toProfileJSONFor(user)
     };
 };
 

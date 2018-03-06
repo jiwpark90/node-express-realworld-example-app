@@ -22,16 +22,15 @@ router.param('username', function(req, res, next, username) {
 // GET profiles/:username
 router.get('/:username', auth.optional, function(req, res, next) {
     if (req.payload) {
-        // TODO id?
         User.findById(req.payload.id).then(function(user) {
             if (!user) {
-                return res.json({profile: req.profile.toProfileJSON(false)});
+                return res.json({profile: req.profile.toProfileJSONFor(false)});
             }
 
-            return res.json({profile: req.profile.toProfileJSON(user)});
+            return res.json({profile: req.profile.toProfileJSONFor(user)});
         });
     } else {
-        return res.json({profile: req.profile.toProfileJSON(false)});
+        return res.json({profile: req.profile.toProfileJSONFor(false)});
     }
     
 });

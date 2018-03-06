@@ -44,7 +44,7 @@ router.post('/', auth.required, function(req, res, next) {
 
         // TODO what if the save fails?
         return article.save().then(function() {
-            return res.json({article: article.toJSON(user)});
+            return res.json({article: article.toJSONFor(user)});
         });
     }).catch(next);
 });
@@ -69,7 +69,7 @@ router.put('/:article', auth.required, function(req, res, next) {
             }
 
             req.article.save().then(function(article) {
-                return res.json({ article: article.toJSON(user) });
+                return res.json({ article: article.toJSONFor(user) });
             }).catch(next);
         } else {
             // unauthorized
@@ -92,7 +92,7 @@ router.get('/:article', auth.optional, function(req, res, next) {
         // to its properties. won't that crash?
         var user = results[0];
 
-        return res.json({ article : req.article.toJSON(user)});
+        return res.json({ article : req.article.toJSONFor(user)});
     }).catch(next);
 });
 
@@ -109,7 +109,7 @@ router.post('/:article/favorite', auth.required, function(req, res, next) {
         return currentUser.favorite(articleId).then(function(loluser) {
             // updateFavoriteCount() returns save(), which is a promise
             return req.article.updateFavoriteCount().then(function(article) {
-                return res.json({article: article.toJSON(currentUser)});
+                return res.json({article: article.toJSONFor(currentUser)});
             });
         });
     }).catch(next);
@@ -127,7 +127,7 @@ router.delete('/:article/unfavorite', auth.required, function(req, res, next) {
 
         return currentUser.unfavorite(articleId).then(function() {
             return req.article.updateFavoriteCount().then(function(article) {
-                return res.json({article: article.toJSON(currentUser)});
+                return res.json({article: article.toJSONFor(currentUser)});
             });
         });
     }).catch(next);
