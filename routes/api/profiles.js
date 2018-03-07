@@ -32,7 +32,36 @@ router.get('/:username', auth.optional, function(req, res, next) {
     } else {
         return res.json({profile: req.profile.toProfileJSONFor(false)});
     }
-    
+});
+
+// follow a user
+router.post('/:username/follow', auth.required, function(req, res, next) {
+    var profileId = req.profile._id;
+    User.findById(req.payload.id).then(function(currentUser) {
+        if (!currentUser) {
+            // unauthenticated
+            return res.sendStatus(401);
+        }
+
+        return currentUser.follow(profileId).then(function() {
+            return res.json({ profile: req.profile.toProfileJSONFor(currentUser) });
+        });
+    }).catch(next);
+});
+
+// unfollow a user
+router.delete('/:username/unfollow', auth.required, function(req, res, next) {
+    var profileId = req.profile._id;
+    User.findById(req.payload.id).then(function(currentUser) {
+        if (!currentUser) {
+            // unauthenticated
+            return res.sendStatus(401);
+        }
+
+        currentUser.unfollow(profileId).then(function() {
+            return res.json({ profile: req.profile.toProfileJSONFor(currentUser) });
+        });
+    }).catch(next);
 });
 
 module.exports = router;
