@@ -53,6 +53,111 @@ router.param('comment', function(req, res, next, commentId) {
     }).catch(next);
 });
 
+// GET all articles authored by users being followed
+router.get('/feed', auth.required, function(req, res, next) {
+    var limit = 20;
+    var offset = 0;
+
+    if (typeof req.query.limit !== "undefined") {
+        limit = req.query.limit;
+    }
+
+    if (typeof req.query.offset !== "undefined") {
+        offset = req.query.offset;
+    }
+    // 1. get the signed in user account
+    // 2. get the following list
+    // 3. query for articles that have author as the following list ids
+
+    User.findById().then(function(currentUser) {
+        if (!currentUser) {
+            // unauthenticated
+            res.sendStatus(401);
+        }
+
+        Promise.all([
+            Article.find({ author: {$in: currentUser.following }})
+                .limit(Number(limit))
+                .skip(Number(offset))
+                .populate('author')
+                .exec(),
+            Article.count({ author: {$in: currentUser.following }})
+        ]).then(function(results) {
+            var articles = results[0];
+            var totalArticleCount = results[1];
+
+            return res.json({
+                articles: articles.map(function(article) {
+                    return article.toJSONFor(currentUser);
+                }),
+                articlesCount: totalArticleCount
+            });
+        }).catch(next);
+    });
+});
+
+// GET all articles
+router.get('/', auth.optional, function(req, res, next) {
+    var query = {};
+    var limit = 20;
+    var offset = 0;
+
+    if (typeof req.query.limit !== 'undefined') {
+        limit = req.query.limit;
+    }
+
+    if (typeof req.query.offset !== 'undefined') {
+        offset = req.query.offset;
+    }
+
+    if (typeof req.query.tag !== 'undefined') {
+        query.tagList = { "$in" : [req.query.tag]};
+    }
+
+    // TODO understand this block
+    Promise.all([
+        req.query.author ? User.findOne({ username: req.query.author }) : null,
+        req.query.favorited ? User.findOne({ username: req.query.favorited }) : null // TODO what comes through 'favorited'?
+    ]).then(function(results) {
+        var author = results[0];
+        var favoriter = results[1];
+
+        if (author) {
+            query.author = author._id;
+        }
+
+        if (favoriter) {
+            query._id = {$in: favoriter.favorites};
+        } else if (req.query.favorited) {
+            // if the user can't be found in the DB, set it so that
+            // our query returns no articles (since the favoriting user DNE)
+            query._id = {$in: []};
+        }
+    });
+
+    return Promise.all([
+        Article.find(query)
+            .limit(Number(limit))
+            .skip(Number(offset))
+            .sort({createdAt: 'desc'})
+            .populate('author')
+            .exec(),
+        Article.count(query).exec(),
+        req.payload ? User.findById(req.payload.id) : null
+    ]).then(function(results) {
+        var articles = results[0];
+        var articlesCount = results[1];
+        var currentUser = results[2];
+
+        return res.json({ 
+            articles: articles.map(function(article) {
+                return article.toJSONFor(currentUser);
+            }),
+            articlesCount: articlesCount
+        });
+    }).catch(next);
+});
+
 // SAVE article
 router.post('/', auth.required, function(req, res, next) {
     User.findById(req.payload.id).then(function(user) {
