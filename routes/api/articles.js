@@ -69,7 +69,7 @@ router.get('/feed', auth.required, function(req, res, next) {
     // 2. get the following list
     // 3. query for articles that have author as the following list ids
 
-    User.findById().then(function(currentUser) {
+    User.findById(req.payload.id).then(function(currentUser) {
         if (!currentUser) {
             // unauthenticated
             res.sendStatus(401);
@@ -114,10 +114,9 @@ router.get('/', auth.optional, function(req, res, next) {
         query.tagList = { "$in" : [req.query.tag]};
     }
 
-    // TODO understand this block
     Promise.all([
         req.query.author ? User.findOne({ username: req.query.author }) : null,
-        req.query.favorited ? User.findOne({ username: req.query.favorited }) : null // TODO what comes through 'favorited'?
+        req.query.favorited ? User.findOne({ username: req.query.favorited }) : null
     ]).then(function(results) {
         var author = results[0];
         var favoriter = results[1];
