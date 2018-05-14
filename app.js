@@ -14,7 +14,7 @@ var isProduction = process.env.NODE_ENV === 'production';
 
 // Create global app object
 var app = express();
-app.options('*', cors());
+app.options('*', cors({credentials: true, origin: true}));
 // app.use(cors());
 
 // Normal express config defaults
