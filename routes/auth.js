@@ -5,6 +5,13 @@ Q:
     1. is 'credentialsRequired' a special field that 
     express-jwt understands? What does it do?
     2. how is payload.id populated?
+    A: this is defined in jwt.sign() in User.js. This is the block:
+        return jwt.sign({
+            id: this._id,
+            username: this.username,
+            exp: parseInt(exp.getTime() / 1000)
+        }, secret);
+
 */
 
 var jwt = require('express-jwt');
