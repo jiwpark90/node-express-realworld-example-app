@@ -12,9 +12,14 @@ var fs = require('fs'),
 
 var isProduction = process.env.NODE_ENV === 'production';
 
+var corsOptions = {
+  origin: 'http://perseids90.thinkster.s3-website-us-west-2.amazonaws.com/',
+  allowedHeaders: ['Content-Type', 'Authorization']
+}
+
 // Create global app object
 var app = express();
-app.options('*', cors({credentials: true, origin: true}));
+app.options('*', cors(corsOptions));
 // app.use(cors());
 
 // Normal express config defaults
