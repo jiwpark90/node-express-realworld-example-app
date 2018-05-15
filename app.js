@@ -14,17 +14,17 @@ var isProduction = process.env.NODE_ENV === 'production';
 
 var corsOptions = {
   origin: 'http://perseids90.thinkster.s3-website-us-west-2.amazonaws.com/',
-  allowedHeaders: ['Content-Type', 'Authorization']
+  allowedHeaders: ['Content-Type', 'Authorization', 'Origin', 'X-Requested-With', 'Accept']
 }
 
 // Create global app object
 var app = express();
-// app.options('*', cors(corsOptions));
-app.use(function(req, res, next) {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
-  next();
-});
+app.options('*', cors(corsOptions));
+// app.use(function(req, res, next) {
+//   res.header('Access-Control-Allow-Origin', '*');
+//   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+//   next();
+// });
 // app.use(cors());
 
 // Normal express config defaults
