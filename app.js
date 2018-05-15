@@ -13,7 +13,7 @@ var fs = require('fs'),
 var isProduction = process.env.NODE_ENV === 'production';
 
 var corsOptions = {
-  origin: 'http://perseids90.thinkster.s3-website-us-west-2.amazonaws.com/',
+  origin: '*',
   allowedHeaders: ['Content-Type', 'Authorization', 'Origin', 'X-Requested-With', 'Accept']
 }
 
