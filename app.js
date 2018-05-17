@@ -12,22 +12,22 @@ var fs = require('fs'),
 
 var isProduction = process.env.NODE_ENV === 'production';
 
-// var corsOptions = {
-//   origin: '*',
-//   optionsSuccessStatus: 200,
-//   allowedHeaders: ['Content-Type', 'Authorization', 'Origin', 'X-Requested-With', 'Accept'],
-//   credentials: true
-// }
+var corsOptions = {
+  origin: '*',
+  optionsSuccessStatus: 200,
+  allowedHeaders: ['Content-Type', 'Authorization', 'Origin', 'X-Requested-With', 'Accept'],
+  credentials: true
+}
 
 // Create global app object
 var app = express();
-// app.options('*', cors(corsOptions));
-app.use(function(req, res, next) {
-  throw Error("BAD");
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
-  next();
-});
+app.options('*', cors(corsOptions));
+app.use(cors(corsOptions));
+// app.use(function(req, res, next) {
+//   res.header('Access-Control-Allow-Origin', '*');
+//   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+//   next();
+// });
 // app.use(cors());
 
 // Normal express config defaults
