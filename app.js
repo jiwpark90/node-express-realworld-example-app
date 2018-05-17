@@ -14,7 +14,9 @@ var isProduction = process.env.NODE_ENV === 'production';
 
 var corsOptions = {
   origin: '*',
-  allowedHeaders: ['Content-Type', 'Authorization', 'Origin', 'X-Requested-With', 'Accept']
+  optionsSuccessStatus: 200,
+  allowedHeaders: ['Content-Type', 'Authorization', 'Origin', 'X-Requested-With', 'Accept'],
+  credentials: true
 }
 
 // Create global app object
