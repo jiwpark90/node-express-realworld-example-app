@@ -13,23 +13,15 @@ var fs = require('fs'),
 var isProduction = process.env.NODE_ENV === 'production';
 
 var corsOptions = {
-  origin: '*',
+  origin: true,
   allowedHeaders: ['Content-Type', 'Authorization', 'Origin', 'X-Requested-With', 'Accept'],
   methods: ['GET', 'POST', 'OPTIONS', 'PUT', 'PATCH', 'DELETE']
-
 }
 
 // Create global app object
 var app = express();
+app.use(cors(corsOptions));
 app.options('*', cors(corsOptions));
-app.use(cors());
-app.use(function(req, res, next) {
-  // res.header('Access-Control-Allow-Origin', '*');
-  // res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
-  res.header('Content-Type', 'application/json; charset=utf-8');
-  next();
-});
-// app.use(cors());
 
 // Normal express config defaults
 app.use(require('morgan')('dev'));
