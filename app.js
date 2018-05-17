@@ -15,12 +15,13 @@ var isProduction = process.env.NODE_ENV === 'production';
 var corsOptions = {
   origin: '*',
   allowedHeaders: ['Content-Type', 'Authorization', 'Origin', 'X-Requested-With', 'Accept'],
-  credentials: true
+  methods: ['GET', 'POST', 'OPTIONS', 'PUT', 'PATCH', 'DELETE']
+
 }
 
 // Create global app object
 var app = express();
-app.options('*', cors());
+app.options('*', cors(corsOptions));
 app.use(cors());
 // app.use(function(req, res, next) {
 //   res.header('Access-Control-Allow-Origin', '*');
