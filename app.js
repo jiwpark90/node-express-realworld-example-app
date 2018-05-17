@@ -15,7 +15,9 @@ var isProduction = process.env.NODE_ENV === 'production';
 var corsOptions = {
   origin: true,
   allowedHeaders: ['Content-Type', 'Authorization', 'Origin', 'X-Requested-With', 'Accept'],
-  methods: ['GET', 'POST', 'OPTIONS', 'PUT', 'PATCH', 'DELETE']
+  methods: ['GET', 'POST', 'OPTIONS', 'PUT', 'PATCH', 'DELETE'],
+  credentials: true,
+  enablePreflight: true
 }
 
 // Create global app object
