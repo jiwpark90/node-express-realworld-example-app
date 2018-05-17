@@ -23,6 +23,7 @@ var isProduction = process.env.NODE_ENV === 'production';
 var app = express();
 // app.options('*', cors(corsOptions));
 app.use(function(req, res, next) {
+  throw Error("BAD");
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
   next();
