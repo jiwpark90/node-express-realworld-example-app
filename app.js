@@ -20,25 +20,27 @@ var corsOptions = {
   enablePreflight: true
 }
 
-var allowCrossDomain = function(req, res, next) {
-  return res.status(404);
+// var allowCrossDomain = function(req, res, next) {
+//   return res.status(404);
 
-  // res.header('Access-Control-Allow-Origin', '*');
-  // res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
-  // res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
+//   // res.header('Access-Control-Allow-Origin', '*');
+//   // res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
+//   // res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
 
-  // // intercept OPTIONS method
-  // if ('OPTIONS' == req.method) {
-  //   res.send(200);
-  // }
-  // else {
-  //   next();
-  // }
-};
+//   // // intercept OPTIONS method
+//   // if ('OPTIONS' == req.method) {
+//   //   res.send(200);
+//   // }
+//   // else {
+//   //   next();
+//   // }
+// };
 
 // Create global app object
 var app = express();
-app.use(allowCrossDomain);
+app.use(function(req, res, next) {
+  return res.status(404);
+});
 // app.use(cors());
 // app.use(cors(corsOptions));
 // app.options('*', cors(corsOptions));
