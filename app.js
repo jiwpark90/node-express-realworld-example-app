@@ -22,6 +22,7 @@ var corsOptions = {
 
 // Create global app object
 var app = express();
+app.use(cors());
 // app.use(cors(corsOptions));
 // app.options('*', cors(corsOptions));
 
