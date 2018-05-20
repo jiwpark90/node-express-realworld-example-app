@@ -21,10 +21,7 @@ var corsOptions = {
 }
 
 var allowCrossDomain = function(req, res, next) {
-
-  var err = new Error('Not Found');
-  err.status = 404;
-  next(err);
+  return res.status(404);
 
   // res.header('Access-Control-Allow-Origin', '*');
   // res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
