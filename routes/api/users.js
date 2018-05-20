@@ -16,9 +16,7 @@ router.get('/user', auth.required, function(req, res, next) {
             // TODO 'sendStatus', not 'status(401)...'? another get thing
             return res.sendStatus(401);
         }
-
-        res.set('Access-Control-Allow-Origin', '*');
-
+        
         return res.json({user: user.toAuthJSON()});
     }).catch(next);
 });
