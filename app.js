@@ -12,20 +12,18 @@ var fs = require('fs'),
 
 var isProduction = process.env.NODE_ENV === 'production';
 
-corsOptions = {
+var corsOptions = {
   origin: true,
   allowedHeaders: ['Content-Type', 'Authorization', 'Origin', 'X-Requested-With', 'Accept'],
   methods: ['GET', 'POST', 'OPTIONS', 'PUT', 'PATCH', 'DELETE'],
   credentials: true,
   enablePreflight: true
-};
-
-
+}
 
 // Create global app object
 var app = express();
-app.use(cors(corsOptions));
-app.options('*', cors(corsOptions));
+// app.use(cors(corsOptions));
+// app.options('*', cors(corsOptions));
 
 // Normal express config defaults
 app.use(require('morgan')('dev'));
@@ -93,7 +91,3 @@ app.use(function(err, req, res, next) {
 var server = app.listen( process.env.PORT || 3000, function(){
   console.log('Listening on port ' + server.address().port);
 });
-
-module.exports = {
-  corsOptions: corsOptions
-}

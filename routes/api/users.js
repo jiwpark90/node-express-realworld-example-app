@@ -3,11 +3,9 @@ var mongoose = require('mongoose');
 var User = mongoose.model('User');
 var passport = require('passport');
 var auth = require('../auth');
-var cors = require('cors');
-var app = require('../../app');
 
 // GET user
-router.get('/user', cors(app.corsOptions), auth.required, function(req, res, next) {
+router.get('/user', auth.required, function(req, res, next) {
     User.findById(req.payload.id).then(function(user) {
         // if promise was resolved, but user is falsey, means
         // JWT payload was invalid (express automatically checks it against
@@ -18,6 +16,8 @@ router.get('/user', cors(app.corsOptions), auth.required, function(req, res, nex
             // TODO 'sendStatus', not 'status(401)...'? another get thing
             return res.sendStatus(401);
         }
+
+        res.set('Access-Control-Allow-Origin', '*');
 
         return res.json({user: user.toAuthJSON()});
     }).catch(next);
