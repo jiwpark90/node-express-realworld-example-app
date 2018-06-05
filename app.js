@@ -38,9 +38,6 @@ var corsOptions = {
 
 // Create global app object
 var app = express();
-app.use(function(req, res, next) {
-  return res.status(404);
-});
 // app.use(cors());
 // app.use(cors(corsOptions));
 // app.options('*', cors(corsOptions));
@@ -54,6 +51,8 @@ app.use(require('method-override')());
 app.use(express.static(__dirname + '/public'));
 
 app.use(session({ secret: 'conduit', cookie: { maxAge: 60000 }, resave: false, saveUninitialized: false  }));
+
+console.log(`Is production ${isProduction}`);
 
 if (!isProduction) {
   app.use(errorhandler());
